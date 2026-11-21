@@ -186,3 +186,12 @@ docker compose logs -f
 ## Lisensi
 
 MIT
+
+<img width="1845" height="900" alt="image" src="https://github.com/user-attachments/assets/04d8e678-62bb-46ba-93ed-9c0cd7e4e7fa" />
+
+---
+<img width="1845" height="898" alt="image" src="https://github.com/user-attachments/assets/52734bd9-9dfe-4e8e-a42b-5be9593a4acf" />
+
+---
+<img width="1918" height="901" alt="image" src="https://github.com/user-attachments/assets/8acfc904-df78-493c-89ff-e013ed4e364d" />
+
