@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fainaya-admindesk-db
+    environment:
+      POSTGRES_USER: fainaya
+      POSTGRES_PASSWORD: fainaya123
+      POSTGRES_DB: fainaya_admindesk
+    volumes:
+      - fainaya_db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fainaya -d fainaya_admindesk"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fainaya-admindesk-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://fainaya:fainaya123@postgres:5432/fainaya_admindesk?schema=public"
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_NAME: Fainaya AdminDesk
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
+      JWT_EXPIRES_IN: 7d
+      UPLOAD_DIR: /app/uploads
+      MAX_FILE_SIZE: 10485760
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./uploads:/app/uploads
+    restart: unless-stopped
+
+volumes:
+  fainaya_db_data:

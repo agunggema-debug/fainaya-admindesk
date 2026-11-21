@@ -1,0 +1,275 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Branch {
+  id             String   @id @default(cuid())
+  code           String   @unique
+  name           String
+  address        String?
+  phone          String?
+  isHeadquarters Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  users               User[]
+  documents           Document[]
+  reports             OperationalReport[]
+  officeItems         OfficeItem[]
+  supplyRequests      SupplyRequest[]
+  pettyCashRecords    PettyCash[]
+  tickets             Ticket[]
+  salesChecklists     SalesChecklist[]
+  meetingMinutes      MeetingMinute[]
+  afterSalesCases     AfterSalesCase[]
+  catalogDistributions CatalogDistribution[]
+}
+
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  password        String
+  name            String
+  role            String   // HQ_COORDINATOR, BRANCH_ADMIN, SALES_SUPPORT, CUSTOMER_SERVICE, BRANCH_MANAGER, SYSTEM_ADMIN
+  department      String?
+  themePreference String   @default("glassmorphism") // glassmorphism, neumorphism, claymorphism, neo-brutalism, minimalist, frost
+  themeMode       String   @default("light")         // light, dark
+  avatar          String?
+  branchId        String?
+  branch          Branch?  @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  createdDocuments     Document[]          @relation("DocumentCreator")
+  approvedDocuments    Document[]          @relation("DocumentApprover")
+  createdReports       OperationalReport[] @relation("ReportCreator")
+  reviewedReports      OperationalReport[] @relation("ReportReviewer")
+  supplyRequests       SupplyRequest[]     @relation("SupplyRequester")
+  approvedSupplies     SupplyRequest[]     @relation("SupplyApprover")
+  pettyCashRecords     PettyCash[]         @relation("PettyCashRecorder")
+  createdTickets        Ticket[]            @relation("TicketCreator")
+  assignedTickets      Ticket[]            @relation("TicketAssignee")
+  createdMinutes       MeetingMinute[]     @relation("MinuteCreator")
+  bulletins            Bulletin[]          @relation("BulletinAuthor")
+  salesChecklists      SalesChecklist[]    @relation("SalesPerson")
+  verifiedChecklists   SalesChecklist[]    @relation("ChecklistVerifier")
+  createdAfterSales    AfterSalesCase[]    @relation("AfterSalesCreator")
+  assignedAfterSales   AfterSalesCase[]    @relation("AfterSalesAssignee")
+  auditLogs            AuditLog[]
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  docNumber   String   @unique
+  title       String
+  category    String   // SOP, SURAT_MASUK, SURAT_KELUAR, KONTRAK, PERIZINAN, MEMO, EDARAN
+  status      String   @default("DRAFT") // DRAFT, MENUNGGU_REVIEW, DISETUJUI, DIARSIPKAN
+  fileUrl     String?
+  fileSize    Int?
+  fileType    String?
+  version     Int      @default(1)
+  summary     String?
+  branchId    String
+  branch      Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  creatorId   String
+  creator     User     @relation("DocumentCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  approverId  String?
+  approver    User?    @relation("DocumentApprover", fields: [approverId], references: [id], onDelete: SetNull)
+  signedAt    DateTime?
+  qrCode      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model OperationalReport {
+  id               String    @id @default(cuid())
+  title            String
+  periodType       String    // DAILY, WEEKLY, MONTHLY
+  periodDate       DateTime
+  branchId         String
+  branch           Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  creatorId        String
+  creator          User      @relation("ReportCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  status           String    @default("SUBMITTED") // SUBMITTED, REVIEWED, APPROVED, REJECTED
+  complianceStatus String    @default("ON_TIME")   // ON_TIME, LATE
+  activitySummary  String    @db.Text
+  keyMetrics       String?   @db.Text
+  notes            String?   @db.Text
+  reviewedById     String?
+  reviewedBy       User?     @relation("ReportReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt       DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model OfficeItem {
+  id        String   @id @default(cuid())
+  name      String
+  category  String   // ATK, PANTRY, FORMULIR, LAINNYA
+  unit      String   // Rim, Pcs, Box, Pack, Lusin
+  stock     Int      @default(0)
+  minStock  Int      @default(5)
+  unitPrice Float?   @default(0)
+  branchId  String
+  branch    Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SupplyRequest {
+  id                 String   @id @default(cuid())
+  requestNumber      String   @unique
+  branchId           String
+  branch             Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  requesterId        String
+  requester          User     @relation("SupplyRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  items              String   @db.Text // JSON list of items
+  totalEstimatedCost Float    @default(0)
+  status             String   @default("PENDING") // PENDING, APPROVED_BRANCH, APPROVED_HQ, REJECTED, COMPLETED
+  reason             String   @db.Text
+  approvedById       String?
+  approvedBy         User?    @relation("SupplyApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model PettyCash {
+  id           String   @id @default(cuid())
+  code         String   @unique
+  type         String   // INCOME, EXPENSE
+  amount       Float
+  category     String   // OPERATIONAL, CONSUMPTION, TRANSPORT, SUPPLIES, UTILITY, REIMBURSEMENT
+  description  String
+  receiptUrl   String?
+  branchId     String
+  branch       Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  recordedById String
+  recordedBy   User     @relation("PettyCashRecorder", fields: [recordedById], references: [id], onDelete: Cascade)
+  status       String   @default("PENDING") // PENDING, VERIFIED, REIMBURSED
+  date         DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Ticket {
+  id               String    @id @default(cuid())
+  ticketNumber     String    @unique
+  title            String
+  description      String    @db.Text
+  priority         String    @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  status           String    @default("OPEN")   // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  targetDepartment String    // GUDANG, FINANCE, HR, IT, UMUM, SALES
+  creatorId        String
+  creator          User      @relation("TicketCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  branchId         String
+  branch           Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  assigneeId       String?
+  assignee         User?     @relation("TicketAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  dueDate          DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model MeetingMinute {
+  id          String   @id @default(cuid())
+  title       String
+  meetingDate DateTime @default(now())
+  location    String   // Zoom / Ruang Rapat HQ / Ruang Rapat Cabang
+  attendees   String   @db.Text
+  agenda      String   @db.Text
+  notes       String   @db.Text
+  actionItems String   @db.Text // JSON list of tasks
+  creatorId   String
+  creator     User     @relation("MinuteCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  branchId    String?
+  branch      Branch?  @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Bulletin {
+  id             String   @id @default(cuid())
+  title          String
+  content        String   @db.Text
+  category       String   @default("ANNOUNCEMENT") // POLICY, HOLIDAY, MEMO_DIREKSI, ANNOUNCEMENT
+  priority       String   @default("NORMAL")       // NORMAL, IMPORTANT, CRITICAL
+  authorId       String
+  author         User     @relation("BulletinAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  targetAudience String   @default("ALL")          // ALL, CABANG_ONLY, HQ_ONLY
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model SalesChecklist {
+  id                       String    @id @default(cuid())
+  orderNumber              String    @unique
+  customerName             String
+  branchId                 String
+  branch                   Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  salesPersonId            String
+  salesPerson              User      @relation("SalesPerson", fields: [salesPersonId], references: [id], onDelete: Cascade)
+  verifiedById             String?
+  verifiedBy               User?     @relation("ChecklistVerifier", fields: [verifiedById], references: [id], onDelete: SetNull)
+  formOrderVerified        Boolean   @default(false)
+  customerIdentityVerified Boolean   @default(false)
+  financingDocVerified     Boolean   @default(false)
+  invoiceVerified          Boolean   @default(false)
+  deliveryHandoverVerified Boolean   @default(false)
+  status                   String    @default("DRAFT") // DRAFT, IN_REVIEW, COMPLIANT, INCOMPLETE
+  notes                    String?   @db.Text
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+
+model CatalogDistribution {
+  id          String    @id @default(cuid())
+  title       String
+  type        String    // PRICELIST, PROMO_SCHEME, TERMS_CONDITIONS
+  version     String
+  fileUrl     String?
+  description String?
+  validUntil  DateTime?
+  isActive    Boolean   @default(true)
+  branchId    String?
+  branch      Branch?   @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model AfterSalesCase {
+  id           String    @id @default(cuid())
+  caseNumber   String    @unique
+  customerName String
+  type         String    // COMPLAINT, WARRANTY_CLAIM, SERVICE_REQUEST, RETURN
+  priority     String    @default("NORMAL") // NORMAL, HIGH, URGENT
+  status       String    @default("OPEN")   // OPEN, IN_PROGRESS, RESOLVED, ESCALATED
+  slaDueDate   DateTime?
+  resolvedAt   DateTime?
+  description  String    @db.Text
+  resolution   String?   @db.Text
+  branchId     String
+  branch       Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  creatorId    String
+  creator      User      @relation("AfterSalesCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  assigneeId   String?
+  assignee     User?     @relation("AfterSalesAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  details   String?  @db.Text
+  ipAddress String?
+  createdAt DateTime @default(now())
+}

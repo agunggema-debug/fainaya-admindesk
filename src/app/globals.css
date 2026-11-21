@@ -1,26 +1,437 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ====================================================================
+   FAINAYA ADMINDESK — ADAPTIVE 6-THEME DESIGN ENGINE
+   Tokens & CSS Custom Properties
+   ==================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Default Theme: Glassmorphism Light */
+  --bg-gradient: radial-gradient(at 0% 0%, rgba(224, 242, 254, 0.8) 0px, transparent 50%),
+                 radial-gradient(at 100% 0%, rgba(238, 242, 255, 0.8) 0px, transparent 50%),
+                 radial-gradient(at 100% 100%, rgba(240, 253, 250, 0.8) 0px, transparent 50%),
+                 #f8fafc;
+  --bg-surface: rgba(255, 255, 255, 0.75);
+  --bg-surface-elevated: rgba(255, 255, 255, 0.9);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.6);
+  --border-width: 1px;
+  --border-radius-card: 16px;
+  --border-radius-btn: 10px;
+  --box-shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+  --box-shadow-btn: 0 4px 14px 0 rgba(79, 70, 229, 0.25);
+  --backdrop-blur: blur(16px);
+  --primary-accent: #4f46e5;
+  --primary-accent-hover: #4338ca;
+  --primary-accent-fg: #ffffff;
+  --input-bg: rgba(255, 255, 255, 0.8);
+  --input-border: rgba(203, 213, 225, 0.8);
+  --input-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --sidebar-bg: rgba(255, 255, 255, 0.65);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* --------------------------------------------------------------------
+   1. GLASSMORPHISM (Dark)
+   -------------------------------------------------------------------- */
+[data-theme="glassmorphism"][data-mode="dark"] {
+  --bg-gradient: radial-gradient(at 0% 0%, rgba(30, 27, 75, 0.6) 0px, transparent 50%),
+                 radial-gradient(at 100% 0%, rgba(15, 23, 42, 0.8) 0px, transparent 50%),
+                 radial-gradient(at 50% 100%, rgba(19, 78, 74, 0.4) 0px, transparent 50%),
+                 #090d16;
+  --bg-surface: rgba(15, 23, 42, 0.65);
+  --bg-surface-elevated: rgba(30, 41, 59, 0.75);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-width: 1px;
+  --border-radius-card: 16px;
+  --border-radius-btn: 10px;
+  --box-shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  --box-shadow-btn: 0 4px 14px 0 rgba(99, 102, 241, 0.35);
+  --backdrop-blur: blur(16px);
+  --primary-accent: #6366f1;
+  --primary-accent-hover: #818cf8;
+  --primary-accent-fg: #ffffff;
+  --input-bg: rgba(15, 23, 42, 0.7);
+  --input-border: rgba(51, 65, 85, 0.8);
+  --input-shadow: none;
+  --sidebar-bg: rgba(15, 23, 42, 0.55);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* --------------------------------------------------------------------
+   2. NEUMORPHISM (Soft UI) — Light & Dark
+   -------------------------------------------------------------------- */
+[data-theme="neumorphism"] {
+  --bg-gradient: none;
+  background-color: #e2e8f0;
+  --bg-surface: #e2e8f0;
+  --bg-surface-elevated: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: transparent;
+  --border-width: 0px;
+  --border-radius-card: 20px;
+  --border-radius-btn: 12px;
+  --box-shadow-card: 8px 8px 18px #cbd5e1, -8px -8px 18px #ffffff;
+  --box-shadow-btn: 5px 5px 12px #cbd5e1, -5px -5px 12px #ffffff;
+  --backdrop-blur: none;
+  --primary-accent: #3b82f6;
+  --primary-accent-hover: #2563eb;
+  --primary-accent-fg: #ffffff;
+  --input-bg: #e2e8f0;
+  --input-border: transparent;
+  --input-shadow: inset 4px 4px 8px #cbd5e1, inset -4px -4px 8px #ffffff;
+  --sidebar-bg: #e2e8f0;
 }
+
+[data-theme="neumorphism"][data-mode="dark"] {
+  --bg-gradient: none;
+  background-color: #1a202c;
+  --bg-surface: #1a202c;
+  --bg-surface-elevated: #1a202c;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border-color: transparent;
+  --border-width: 0px;
+  --border-radius-card: 20px;
+  --border-radius-btn: 12px;
+  --box-shadow-card: 8px 8px 18px #10141c, -8px -8px 18px #242c3c;
+  --box-shadow-btn: 5px 5px 12px #10141c, -5px -5px 12px #242c3c;
+  --backdrop-blur: none;
+  --primary-accent: #60a5fa;
+  --primary-accent-hover: #3b82f6;
+  --primary-accent-fg: #0f172a;
+  --input-bg: #1a202c;
+  --input-border: transparent;
+  --input-shadow: inset 4px 4px 8px #10141c, inset -4px -4px 8px #242c3c;
+  --sidebar-bg: #1a202c;
+}
+
+/* --------------------------------------------------------------------
+   3. CLAYMORPHISM (3D Puffy Clay) — Light & Dark
+   -------------------------------------------------------------------- */
+[data-theme="claymorphism"] {
+  --bg-gradient: radial-gradient(circle at 10% 20%, #fef3c7 0%, transparent 40%),
+                 radial-gradient(circle at 90% 80%, #fce7f3 0%, transparent 40%),
+                 #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --text-primary: #1e1b4b;
+  --text-secondary: #4338ca;
+  --text-muted: #818cf8;
+  --border-color: rgba(255, 255, 255, 0.9);
+  --border-width: 2px;
+  --border-radius-card: 26px;
+  --border-radius-btn: 18px;
+  --box-shadow-card: inset 0 3px 6px rgba(255, 255, 255, 0.9),
+                     inset 0 -4px 8px rgba(0, 0, 0, 0.04),
+                     0 16px 32px -4px rgba(79, 70, 229, 0.12);
+  --box-shadow-btn: inset 0 2px 4px rgba(255, 255, 255, 0.8),
+                    0 8px 18px -2px rgba(99, 102, 241, 0.35);
+  --backdrop-blur: none;
+  --primary-accent: #6366f1;
+  --primary-accent-hover: #4f46e5;
+  --primary-accent-fg: #ffffff;
+  --input-bg: #f8fafc;
+  --input-border: #e0e7ff;
+  --input-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+  --sidebar-bg: #ffffff;
+}
+
+[data-theme="claymorphism"][data-mode="dark"] {
+  --bg-gradient: radial-gradient(circle at 20% 30%, #311b92 0%, transparent 40%),
+                 radial-gradient(circle at 80% 70%, #1a237e 0%, transparent 40%),
+                 #0f172a;
+  --bg-surface: #1e293b;
+  --bg-surface-elevated: #283548;
+  --text-primary: #f8fafc;
+  --text-secondary: #c7d2fe;
+  --text-muted: #818cf8;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-width: 2px;
+  --border-radius-card: 26px;
+  --border-radius-btn: 18px;
+  --box-shadow-card: inset 0 3px 6px rgba(255, 255, 255, 0.12),
+                     inset 0 -4px 8px rgba(0, 0, 0, 0.25),
+                     0 16px 32px -4px rgba(0, 0, 0, 0.45);
+  --box-shadow-btn: inset 0 2px 4px rgba(255, 255, 255, 0.25),
+                    0 8px 18px -2px rgba(99, 102, 241, 0.45);
+  --backdrop-blur: none;
+  --primary-accent: #818cf8;
+  --primary-accent-hover: #6366f1;
+  --primary-accent-fg: #0f172a;
+  --input-bg: #151e2e;
+  --input-border: #334155;
+  --input-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  --sidebar-bg: #1e293b;
+}
+
+/* --------------------------------------------------------------------
+   4. NEO-BRUTALISM — Bold, Hard Shadows, High Contrast
+   -------------------------------------------------------------------- */
+[data-theme="neo-brutalism"] {
+  --bg-gradient: none;
+  background-color: #fef08a; /* punchy subtle canary yellow */
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --text-primary: #000000;
+  --text-secondary: #111111;
+  --text-muted: #4b5563;
+  --border-color: #000000;
+  --border-width: 2.5px;
+  --border-radius-card: 8px;
+  --border-radius-btn: 6px;
+  --box-shadow-card: 5px 5px 0px #000000;
+  --box-shadow-btn: 4px 4px 0px #000000;
+  --backdrop-blur: none;
+  --primary-accent: #2563eb;
+  --primary-accent-hover: #1d4ed8;
+  --primary-accent-fg: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #000000;
+  --input-shadow: 3px 3px 0px #000000;
+  --sidebar-bg: #ffffff;
+}
+
+[data-theme="neo-brutalism"][data-mode="dark"] {
+  --bg-gradient: none;
+  background-color: #171717;
+  --bg-surface: #262626;
+  --bg-surface-elevated: #262626;
+  --text-primary: #ffffff;
+  --text-secondary: #f5f5f5;
+  --text-muted: #a3a3a3;
+  --border-color: #ffffff;
+  --border-width: 2.5px;
+  --border-radius-card: 8px;
+  --border-radius-btn: 6px;
+  --box-shadow-card: 5px 5px 0px #ffffff;
+  --box-shadow-btn: 4px 4px 0px #ffffff;
+  --backdrop-blur: none;
+  --primary-accent: #facc15;
+  --primary-accent-hover: #eab308;
+  --primary-accent-fg: #000000;
+  --input-bg: #171717;
+  --input-border: #ffffff;
+  --input-shadow: 3px 3px 0px #ffffff;
+  --sidebar-bg: #262626;
+}
+
+/* --------------------------------------------------------------------
+   5. MINIMALIST UI — Flat, Clean Whitespace, Razor Sharp
+   -------------------------------------------------------------------- */
+[data-theme="minimalist"] {
+  --bg-gradient: none;
+  background-color: #fcfcfc;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #fafafa;
+  --text-primary: #09090b;
+  --text-secondary: #52525b;
+  --text-muted: #a1a1aa;
+  --border-color: #e4e4e7;
+  --border-width: 1px;
+  --border-radius-card: 8px;
+  --border-radius-btn: 6px;
+  --box-shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --box-shadow-btn: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --backdrop-blur: none;
+  --primary-accent: #18181b;
+  --primary-accent-hover: #27272a;
+  --primary-accent-fg: #fafafa;
+  --input-bg: #ffffff;
+  --input-border: #d4d4d8;
+  --input-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --sidebar-bg: #fcfcfc;
+}
+
+[data-theme="minimalist"][data-mode="dark"] {
+  --bg-gradient: none;
+  background-color: #09090b;
+  --bg-surface: #141416;
+  --bg-surface-elevated: #18181b;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --border-color: #27272a;
+  --border-width: 1px;
+  --border-radius-card: 8px;
+  --border-radius-btn: 6px;
+  --box-shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  --box-shadow-btn: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --backdrop-blur: none;
+  --primary-accent: #f4f4f5;
+  --primary-accent-hover: #e4e4e7;
+  --primary-accent-fg: #09090b;
+  --input-bg: #141416;
+  --input-border: #27272a;
+  --input-shadow: none;
+  --sidebar-bg: #09090b;
+}
+
+/* --------------------------------------------------------------------
+   6. FROST UI (Soft Glass) — Deep Icy Blur (24px), High Contrast
+   -------------------------------------------------------------------- */
+[data-theme="frost"] {
+  --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #f0fdfa 50%, #f8fafc 100%);
+  --bg-surface: rgba(255, 255, 255, 0.68);
+  --bg-surface-elevated: rgba(255, 255, 255, 0.85);
+  --text-primary: #0369a1;
+  --text-secondary: #0f766e;
+  --text-muted: #64748b;
+  --border-color: rgba(186, 230, 253, 0.6);
+  --border-width: 1.5px;
+  --border-radius-card: 18px;
+  --border-radius-btn: 12px;
+  --box-shadow-card: 0 12px 36px 0 rgba(14, 165, 233, 0.12);
+  --box-shadow-btn: 0 4px 14px 0 rgba(14, 165, 233, 0.28);
+  --backdrop-blur: blur(24px);
+  --primary-accent: #0284c7;
+  --primary-accent-hover: #0369a1;
+  --primary-accent-fg: #ffffff;
+  --input-bg: rgba(255, 255, 255, 0.75);
+  --input-border: rgba(186, 230, 253, 0.8);
+  --input-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --sidebar-bg: rgba(255, 255, 255, 0.6);
+}
+
+[data-theme="frost"][data-mode="dark"] {
+  --bg-gradient: linear-gradient(135deg, #082f49 0%, #042f2e 50%, #030712 100%);
+  --bg-surface: rgba(15, 23, 42, 0.72);
+  --bg-surface-elevated: rgba(30, 41, 59, 0.82);
+  --text-primary: #38bdf8;
+  --text-secondary: #2dd4bf;
+  --text-muted: #64748b;
+  --border-color: rgba(56, 189, 248, 0.25);
+  --border-width: 1.5px;
+  --border-radius-card: 18px;
+  --border-radius-btn: 12px;
+  --box-shadow-card: 0 12px 36px 0 rgba(0, 0, 0, 0.55);
+  --box-shadow-btn: 0 4px 14px 0 rgba(56, 189, 248, 0.3);
+  --backdrop-blur: blur(24px);
+  --primary-accent: #38bdf8;
+  --primary-accent-hover: #0ea5e9;
+  --primary-accent-fg: #0f172a;
+  --input-bg: rgba(15, 23, 42, 0.8);
+  --input-border: rgba(56, 189, 248, 0.3);
+  --input-shadow: none;
+  --sidebar-bg: rgba(15, 23, 42, 0.65);
+}
+
+/* ====================================================================
+   SEMANTIC UTILITY STYLES
+   ==================================================================== */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-gradient, #f8fafc);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.theme-card {
+  background-color: var(--bg-surface);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-card);
+  box-shadow: var(--box-shadow-card);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.theme-card-elevated {
+  background-color: var(--bg-surface-elevated);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-card);
+  box-shadow: var(--box-shadow-card);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.theme-input {
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  border: var(--border-width) solid var(--input-border);
+  border-radius: var(--border-radius-btn);
+  box-shadow: var(--input-shadow);
+  transition: all 0.15s ease-in-out;
+}
+
+.theme-input:focus {
+  outline: none;
+  border-color: var(--primary-accent);
+}
+
+.theme-btn-primary {
+  background-color: var(--primary-accent);
+  color: var(--primary-accent-fg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-btn);
+  box-shadow: var(--box-shadow-btn);
+  font-weight: 600;
+  transition: all 0.15s ease-in-out;
+}
+
+.theme-btn-primary:hover {
+  background-color: var(--primary-accent-hover);
+  transform: translateY(-1px);
+}
+
+.theme-btn-secondary {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--border-radius-btn);
+  box-shadow: var(--box-shadow-card);
+  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+}
+
+.theme-btn-secondary:hover {
+  background-color: var(--bg-surface-elevated);
+}
+
+.theme-sidebar {
+  background-color: var(--sidebar-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border-right: var(--border-width) solid var(--border-color);
+}
+
+.theme-header {
+  background-color: var(--sidebar-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border-bottom: var(--border-width) solid var(--border-color);
+}
+
+/* ====================================================================
+   TEXT UTILITY CLASSES (mapped to CSS variables)
+   ==================================================================== */
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.bg-primary {
+  background-color: var(--primary-accent);
+}
+
+.bg-surface {
+  background-color: var(--bg-surface);
 }
